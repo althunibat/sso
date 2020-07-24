@@ -1,0 +1,20 @@
+---
+kind: pipeline
+name: fn 
+type: docker
+steps:
+  - name: compile
+    image: mcr.microsoft.com/dotnet/core/sdk:3.1
+    commands:
+    - dotnet publish -c Release -o ./release
+  - name: build-image
+    image: plugins/docker
+    settings:
+      username: admin
+      password:
+        from_secret: docker_password
+      repo: harbor.godwit.io/library/sso
+      registry: harbor.godwit.io/library
+      auto_tag: true
+      purge: true
+      dockerfile: ./Dockerfile
